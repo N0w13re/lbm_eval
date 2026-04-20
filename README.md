@@ -228,6 +228,18 @@ This benchmark was created by the authors of the 2025 paper
 [A Careful Examination of Large Behavior Models for Multitask Dexterous Manipulation](https://toyotaresearchinstitute.github.io/lbm1/),
 and is built on the [Drake](https://drake.mit.edu/) toolbox.
 
+# Citation
+
+```
+@misc{lbm_eval2025,
+  title        = {{LBM Eval}: A Simulation Benchmark for Large Behavior Model Policies},
+  author       = {TRI LBM Team and Jose Barreiros and Andrew Beaulieu and Aditya Bhat and Rick Cory and Eric Cousineau and Hongkai Dai and Ching-Hsin Fang and Kunimatsu Hashimoto and Muhammad Zubair Irshad and Masha Itkina and Naveen Kuppuswamy and Kuan-Hui Lee and Katherine Liu and Dale McConachie and Ian McMahon and Haruki Nishimura and Calder Phillips-Grafflin and Charles Richter and Paarth Shah and Krishnan Srinivasan and Blake Wulfe and Chen Xu and Mengchao Zhang and Alex Alspach and Maya Angeles and Kushal Arora and Vitor Campagnolo Guizilini and Alejandro Castro and Dian Chen and Ting-Sheng Chu and Sam Creasey and Sean Curtis and Richard Denitto and Emma Dixon and Eric Dusel and Matthew Ferreira and Aimee Goncalves and Grant Gould and Damrong Guoy and Swati Gupta and Xuchen Han and Kyle Hatch and Brendan Hathaway and Allison Henry and Hillel Hochsztein and Phoebe Horgan and Shun Iwase and Donovon Jackson and Siddharth Karamcheti and Sedrick Keh and Joseph Masterjohn and Jean Mercat and Patrick Miller and Paul Mitiguy and Tony Nguyen and Jeremy Nimmer and Yuki Noguchi and Reko Ong and Aykut Onol and Owen Pfannenstiehl and Richard Poyner and Leticia Priebe Mendes Rocha and Gordon Richardson and Christopher Rodriguez and Derick Seale and Michael Sherman and Mariah Smith-Jones and David Tago and Pavel Tokmakov and Matthew Tran and Basile Van Hoorick and Igor Vasiljevic and Sergey Zakharov and Mark Zolotas and Rares Ambrus and Kerri Fetzer-Borelli and Benjamin Burchfiel and Hadas Kress-Gazit and Siyuan Feng and Stacie Ford and Russ Tedrake},
+  year         = {2025},
+  howpublished = {\url{https://github.com/ToyotaResearchInstitute/lbm_eval}},
+  note         = {Toyota Research Institute. Version 1.1.0},
+}
+```
+
 # License
 
 The majority of LBM Eval is primarily distributed under the terms of both the
