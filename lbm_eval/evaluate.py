@@ -444,6 +444,7 @@ def _run(
     num_evaluations: int,
     num_processes: int,
     server_uri: str,
+    scenario_start: int = 0,
     # For unit testing only.
     t_max: float = None,
 ) -> EvaluationResults:
@@ -458,7 +459,7 @@ def _run(
             t_max=t_max,
         )
         for skill_type in skill_types
-        for scenario_index in range(num_evaluations)
+        for scenario_index in range(scenario_start, scenario_start + num_evaluations)
     ]
 
     progress_bar = None
@@ -514,6 +515,16 @@ def main():
         default=10,
         help="The number of evaluations to run per skill. "
         "(Defaults to %(default)s.)",
+    )
+    parser.add_argument(
+        "--scenario_start",
+        type=int,
+        metavar="N",
+        default=0,
+        help="The first scenario_index to evaluate (default: %(default)s). "
+        "Combined with --num_evaluations, evaluates "
+        "scenario indices [scenario_start, scenario_start + num_evaluations). "
+        "Used for sharding scenarios across multiple workers.",
     )
     parser.add_argument(
         "--num_processes",
