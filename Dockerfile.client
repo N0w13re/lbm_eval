@@ -1,0 +1,69 @@
+# Ubuntu 24.04 base — has Python 3.12 + glibc 2.39 by default, which is what
+# Drake's official wheels target. Avoids the deadsnakes PPA dance on 22.04.
+#
+# This image runs ONLY the lbm_eval client (Drake simulation + gRPC client).
+# The pi0 policy server stays on the host openpi `.venv`.
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        # Drake's PackageMap downloader shells out to `/usr/bin/python3`,
+        # which on Ubuntu 24.04 only exists if you install the meta-package.
+        python3 python3.12 python3.12-venv python3.12-dev \
+        ca-certificates curl wget git \
+        # Drake runtime deps (rendering / GUI libs).
+        libgl1 libglib2.0-0 libxext6 libsm6 libxrender1 \
+        libegl1 libgles2 libglu1-mesa \
+        libx11-6 libxi6 libxrandr2 libxxf86vm1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Standalone venv for the eval client.
+RUN python3.12 -m venv /opt/lbm_client
+ENV PATH=/opt/lbm_client/bin:$PATH
+
+RUN pip install --no-cache-dir --upgrade pip wheel
+RUN pip install --no-cache-dir \
+        "drake>=1.30" \
+        "grpcio>=1.60" \
+        "grpcio-tools>=1.60" \
+        "protobuf>=4.21" \
+        "numpy>=1.26" \
+        "tqdm>=4.66" \
+        "pyyaml>=6.0" \
+        # anzu / lbm_eval source-tree imports — discovered empirically.
+        "dill>=0.3" \
+        "matplotlib>=3.8" \
+        "scipy>=1.11" \
+        "gymnasium>=0.29" \
+        "boto3>=1.34"
+
+# Install ALL four official LBM wheels.
+#  - robot_gym         : Policy / spaces base classes
+#  - lbm_eval          : ships anzu/, lbm_eval/, grpc_workspace/ as proper packages
+#                        — its package.xml landing under site-packages is what
+#                        triggers _add_venv_packages() to also pick up the data
+#                        wheels below.
+#  - lbm_eval_models   : drake meshes, urdfs (data only)
+#  - lbm_eval_scenarios: skill YAMLs + skill_filenames.txt (REQUIRED for skills
+#                        to be discoverable via --skill_type)
+COPY wheels/ /tmp/lbm_wheels/
+RUN pip install --no-cache-dir \
+        /tmp/lbm_wheels/robot_gym-*.whl \
+        /tmp/lbm_wheels/lbm_eval-*.whl \
+        /tmp/lbm_wheels/lbm_eval_models-*.whl \
+        /tmp/lbm_wheels/lbm_eval_scenarios-*.whl \
+    && rm -rf /tmp/lbm_wheels
+
+# Drake renders via EGL by default when there's no X server.
+# (Don't set DRAKE_RESOURCE_ROOT — it confuses Drake unless it points at a
+#  directory containing a `drake/` subdir.)
+ENV DISPLAY=
+ENV PYOPENGL_PLATFORM=egl
+ENV MUJOCO_GL=egl
+
+WORKDIR /workspace
+# Everything (lbm_eval, anzu, robot_gym, grpc_workspace) is installed via the
+# wheels — no source mount required at runtime.
+
+ENTRYPOINT ["python", "-m", "lbm_eval.evaluate"]
