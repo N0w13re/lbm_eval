@@ -129,7 +129,7 @@ def _configure_logging() -> None:
 
 def _get_json_path(output_directory: Path) -> Path:
     """Returns a path to a JSON file for storing evaluation results."""
-    timestamp = datetime.now().astimezone().isoformat(timespec="milliseconds")
+    timestamp = datetime.now().strftime("%H:%M:%S")
     json_file = f"results-{timestamp}.json"
     json_path = output_directory / json_file
     return json_path
